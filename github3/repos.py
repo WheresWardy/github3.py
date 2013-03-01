@@ -1353,7 +1353,15 @@ class Contents(GitHubObject):
         #: Decoded content of the file.
         self.decoded = self.content
         if self.encoding == 'base64':
-            self.decoded = b64decode(self.content.encode()).decode()
+            self.decoded = b64decode(self.content.encode())
+
+        try:
+            self.decoded = self.decoded.decode('utf-8')
+        except UnicodeDecodeError:
+            try:
+                self.decoded = self.decoded.decode('iso-8859-1')
+            except UnicodeDecodeError:
+                self.decoded = self.decoded.decode('ascii')
 
         # file name, path, and size
         #: Name of the content.
